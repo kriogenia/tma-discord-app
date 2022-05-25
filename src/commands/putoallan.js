@@ -3,14 +3,14 @@ import { JsonResponse } from "../server";
 
 const CODE = "```";
 
-const putoAllan = (message) => {
+const putoAllan = async (message) => {
   const author = message.member.user.id;
   const invoked = message.data?.options[0]?.value ?? "Allan";
   return getAscii(invoked)
     .then((art) => {
       const text =
         art ??
-        "No hay dibujito porque os estais pasando, relajad un poco #PutoAllan";
+        `No hay dibujito porque os estais pasando, relajad un poco. **Puto ${invoked}**`;
 
       return new JsonResponse({
         type: 4,
