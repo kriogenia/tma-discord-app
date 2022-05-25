@@ -1,4 +1,4 @@
-import { PUTOALLAN_COMMAND } from "./commands/index.js";
+import { PUTOALLAN_COMMAND } from "./commands/declaration.js";
 import fetch from "node-fetch";
 
 /**
@@ -77,5 +77,5 @@ async function registerCommands(url) {
   return response;
 }
 
-// await registerGlobalCommands();
-await registerGuildCommands();
+await registerGlobalCommands();
+// await registerGuildCommands();

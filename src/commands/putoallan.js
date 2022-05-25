@@ -5,7 +5,7 @@ const CODE = "```";
 
 const putoAllan = (message) => {
   const author = message.member.user.id;
-  const invoked = "Allan";
+  const invoked = message.data?.options[0]?.value ?? "Allan";
   return getAscii(invoked)
     .then((art) => {
       const text =

@@ -9,7 +9,7 @@ This is a bot that brings some functionality to our Discord server, hosted on Cl
 
 ## Commands
 
-- `\puto` Prints an ASCII "Puto Allan" in the screen.
+- `\puto {string?}` Prints an ASCII "Puto {string}" in the screen. If not string is specified, Puto Allan will be printed.
 
 ---
 
@@ -23,6 +23,7 @@ Below is a basic overview of the project structure:
 │   ├── api           	  	  -> Code to integrate different APIs
 │   │   ├── textart.js	      
 │   ├── commands           	  -> JSON payloads for commands
+│   │   ├── declaration.js	  -> Declaration for command creation
 │   │   ├── putoallan.js	  -> Command to print ASCII PutoAllan
 │   ├── register.js           -> Sets up commands with the Discord API
 │   ├── server.js             -> Discord app logic and routing
