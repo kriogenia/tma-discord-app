@@ -8,10 +8,9 @@ import {
   InteractionType,
   verifyKey,
 } from "discord-interactions";
-import { AWW_COMMAND, INVITE_COMMAND } from "./commands.js";
-import { getCuteUrl } from "./reddit.js";
+import commands from "./commands/index.js";
 
-class JsonResponse extends Response {
+export class JsonResponse extends Response {
   constructor(body, init) {
     const jsonBody = JSON.stringify(body);
     init = init || {
@@ -37,21 +36,26 @@ router.get("/", () => {
  * include a JSON payload described here:
  * https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object
  */
-router.post("/", async (request, env) => {
+router.post("/", async (request /*, env*/) => {
   const message = await request.json();
-  console.log(message);
+
+  // The `PING` message is used during the initial webhook handshake, and is
+  // required to configure the webhook in the developer portal.
   if (message.type === InteractionType.PING) {
-    // The `PING` message is used during the initial webhook handshake, and is
-    // required to configure the webhook in the developer portal.
     console.log("Handling Ping request");
     return new JsonResponse({
       type: InteractionResponseType.PONG,
     });
   }
-
+  /// The `APPLICATION_COMMAND` messages will be the user commands
   if (message.type === InteractionType.APPLICATION_COMMAND) {
-    // Most user commands will come as `APPLICATION_COMMAND`.
+    return commands[message.data.name.toLowerCase()](message);
+  }
+  /*
     switch (message.data.name.toLowerCase()) {
+      case PUTOALLAN_COMMAND.name.toLowerCase(): {
+        return PUTOALLAN_COMMAND.run();
+      }
       case AWW_COMMAND.name.toLowerCase(): {
         console.log("handling cute request");
         const cuteUrl = await getCuteUrl();
@@ -63,7 +67,7 @@ router.post("/", async (request, env) => {
         });
       }
       case INVITE_COMMAND.name.toLowerCase(): {
-        const applicationId = env.DISCORD_APPLICATION_ID;
+        const applicationId = env.TMA_DISCORD_APPLICATION_ID;
         const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${applicationId}&scope=applications.commands`;
         return new JsonResponse({
           type: 4,
@@ -76,11 +80,10 @@ router.post("/", async (request, env) => {
       default:
         console.error("Unknown Command");
         return new JsonResponse({ error: "Unknown Type" }, { status: 400 });
-    }
-  }
+    }*/
 
-  console.error("Unknown Type");
-  return new JsonResponse({ error: "Unknown Type" }, { status: 400 });
+  console.error("Unsupported Type");
+  return new JsonResponse({ error: "Unsupported Type" }, { status: 400 });
 });
 router.all("*", () => new Response("Not Found.", { status: 404 }));
 
@@ -97,7 +100,6 @@ export default {
       // Using the incoming headers, verify this request actually came from discord.
       const signature = request.headers.get("x-signature-ed25519");
       const timestamp = request.headers.get("x-signature-timestamp");
-      console.log(signature, timestamp, env.TMA_DISCORD_PUBLIC_KEY);
       const body = await request.clone().arrayBuffer();
       const isValidRequest = verifyKey(
         body,
