@@ -1,9 +1,8 @@
-name = "awwbot"
+name = "tma"
 main = "./src/server.js"
-type = "javascript"
 compatibility_date="2022-02-26"
 
-account_id = "c21e5aacc2d33c52c2b6589adbe56dc0"
+account_id = "0310df0fd9a2a832b38ae5f648543181"
 workers_dev = true
 
 [[rules]]
@@ -15,7 +14,7 @@ globs = [ "**/*.js" ]
 [env.production]
 
 # [secrets]
-# DISCORD_TOKEN
-# DISCORD_PUBLIC_KEY
-# DISCORD_APPLICATION_ID
-# DISCORD_TEST_GUILD_ID
+# TMA_DISCORD_TOKEN
+# TMA_DISCORD_PUBLIC_KEY
+# TMA_DISCORD_APPLICATION_ID
+# TMA_DISCORD_TEST_GUILD_ID

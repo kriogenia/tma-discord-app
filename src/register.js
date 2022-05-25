@@ -1,5 +1,5 @@
-import { AWW_COMMAND, INVITE_COMMAND } from './commands.js';
-import fetch from 'node-fetch';
+import { AWW_COMMAND, INVITE_COMMAND } from "./commands.js";
+import fetch from "node-fetch";
 
 /**
  * This file is meant to be run from the command line, and is not used by the
@@ -9,16 +9,16 @@ import fetch from 'node-fetch';
 
 /* eslint-disable no-undef */
 
-const token = process.env.DISCORD_TOKEN;
-const applicationId = process.env.DISCORD_APPLICATION_ID;
-const testGuildId = process.env.DISCORD_TEST_GUILD_ID;
+const token = process.env.TMA_DISCORD_TOKEN;
+const applicationId = process.env.TMA_DISCORD_APPLICATION_ID;
+const testGuildId = process.env.TMA_DISCORD_TEST_GUILD_ID;
 
 if (!token) {
-  throw new Error('The DISCORD_TOKEN environment variable is required.');
+  throw new Error("The TMA_DISCORD_TOKEN environment variable is required.");
 }
 if (!applicationId) {
   throw new Error(
-    'The DISCORD_APPLICATION_ID environment variable is required.'
+    "The TMA_DISCORD_APPLICATION_ID environment variable is required."
   );
 }
 
@@ -30,7 +30,7 @@ if (!applicationId) {
 async function registerGuildCommands() {
   if (!testGuildId) {
     throw new Error(
-      'The DISCORD_TEST_GUILD_ID environment variable is required.'
+      "The TMA_DISCORD_TEST_GUILD_ID environment variable is required."
     );
   }
   const url = `https://discord.com/api/v10/applications/${applicationId}/guilds/${testGuildId}/commands`;
@@ -60,22 +60,22 @@ async function registerGlobalCommands() {
 async function registerCommands(url) {
   const response = await fetch(url, {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bot ${token}`,
     },
-    method: 'PUT',
+    method: "PUT",
     body: JSON.stringify([AWW_COMMAND, INVITE_COMMAND]),
   });
 
   if (response.ok) {
-    console.log('Registered all commands');
+    console.log("Registered all commands");
   } else {
-    console.error('Error registering commands');
+    console.error("Error registering commands");
     const text = await response.text();
     console.error(text);
   }
   return response;
 }
 
-await registerGlobalCommands();
-// await registerGuildCommands();
+// await registerGlobalCommands();
+await registerGuildCommands();
