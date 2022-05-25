@@ -1,8 +1,4 @@
-import {
-  AWW_COMMAND,
-  INVITE_COMMAND,
-  PUTOALLAN_COMMAND,
-} from "./commands/index.js";
+import { PUTOALLAN_COMMAND } from "./commands/index.js";
 import fetch from "node-fetch";
 
 /**
@@ -68,7 +64,7 @@ async function registerCommands(url) {
       Authorization: `Bot ${token}`,
     },
     method: "PUT",
-    body: JSON.stringify([AWW_COMMAND, INVITE_COMMAND, PUTOALLAN_COMMAND]),
+    body: JSON.stringify([PUTOALLAN_COMMAND]),
   });
 
   if (response.ok) {

@@ -1,16 +1,15 @@
-# Cloudflare worker example app
+# TMA's Cloudflare Discord app
 
-awwbot is an example app that brings the cuteness of `r/aww` straight to your Discord server, hosted on Cloudflare workers. Cloudflare Workers are a convenient way to host Discord bots due to the free tier, simple development model, and automatically managed environment (no VMs!).
-
-The tutorial for building awwbot is [in the developer documentation](TODO)
-
-![awwbot in action](https://user-images.githubusercontent.com/534619/157503404-a6c79d1b-f0d0-40c2-93cb-164f9df7c138.gif)
+This is a bot that brings some functionality to our Discord server, hosted on Cloudflare workers. Cloudflare Workers are a convenient way to host Discord bots due to the free tier, simple development model, and automatically managed environment (no VMs!).
 
 ## Resources used
 
 - [Discord Interactions API](https://discord.com/developers/docs/interactions/receiving-and-responding)
 - [Cloudflare Workers](https://workers.cloudflare.com/) for hosting
-- [Reddit API](https://www.reddit.com/dev/api/) to send messages back to the user
+
+## Commands
+
+- `\puto` Prints an ASCII "Puto Allan" in the screen.
 
 ---
 
@@ -21,12 +20,14 @@ Below is a basic overview of the project structure:
 ```
 ├── .github/workflows/ci.yaml -> Github Action configuration
 ├── src
-│   ├── commands.js           -> JSON payloads for commands
-│   ├── reddit.js             -> Interactions with the Reddit API
+│   ├── api           	  	  -> Code to integrate different APIs
+│   │   ├── textart.js	      
+│   ├── commands           	  -> JSON payloads for commands
+│   │   ├── putoallan.js	  -> Command to print ASCII PutoAllan
 │   ├── register.js           -> Sets up commands with the Discord API
 │   ├── server.js             -> Discord app logic and routing
 ├── test
-|   ├── test.js               -> Tests for app
+|   ├── test.js               -> Tests for app (it should have some, but, you know)
 ├── wrangler.toml             -> Configuration for Cloudflare workers
 ├── package.json
 ├── README.md
@@ -116,25 +117,6 @@ This is the process we'll use for local testing and development. When you've pub
 
 ## Deploying app
 
-This repository is set up to automatically deploy to Cloudflare Workers when new changes land on the `main` branch. To deploy manually, run `npm run publish`, which uses the `wrangler publish` command under the hood. Publishing via a GitHub Action requires obtaining an [API Token and your Account ID from Cloudflare](https://developers.cloudflare.com/workers/cli-wrangler/authentication/). These are stored [as secrets in the GitHub repository](https://docs.github.com/en/actions/security-guides/encrypted-secrets), making them available to GitHub Actions. The following configuration in `.github/workflows/ci.yaml` demonstrates how to tie it all together:
+This repository is set up to automatically deploy to Cloudflare Workers when new changes land on the `main` branch. To deploy manually, run `npm run publish`, which uses the `wrangler publish` command under the hood.
 
-```yaml
-release:
-  if: github.ref == 'refs/heads/main'
-  runs-on: ubuntu-latest
-  needs: [test, lint]
-  steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: 16
-    - run: npm install
-    - run: npm run publish
-      env:
-        CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-```
-
-## Questions?
-
-Feel free to post an issue here, or reach out to [@justinbeckwith](https://twitter.com/JustinBeckwith)!
+### #PutoAllan

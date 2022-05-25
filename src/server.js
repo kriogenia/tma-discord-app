@@ -51,36 +51,6 @@ router.post("/", async (request /*, env*/) => {
   if (message.type === InteractionType.APPLICATION_COMMAND) {
     return commands[message.data.name.toLowerCase()](message);
   }
-  /*
-    switch (message.data.name.toLowerCase()) {
-      case PUTOALLAN_COMMAND.name.toLowerCase(): {
-        return PUTOALLAN_COMMAND.run();
-      }
-      case AWW_COMMAND.name.toLowerCase(): {
-        console.log("handling cute request");
-        const cuteUrl = await getCuteUrl();
-        return new JsonResponse({
-          type: 4,
-          data: {
-            content: cuteUrl,
-          },
-        });
-      }
-      case INVITE_COMMAND.name.toLowerCase(): {
-        const applicationId = env.TMA_DISCORD_APPLICATION_ID;
-        const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${applicationId}&scope=applications.commands`;
-        return new JsonResponse({
-          type: 4,
-          data: {
-            content: INVITE_URL,
-            flags: 64,
-          },
-        });
-      }
-      default:
-        console.error("Unknown Command");
-        return new JsonResponse({ error: "Unknown Type" }, { status: 400 });
-    }*/
 
   console.error("Unsupported Type");
   return new JsonResponse({ error: "Unsupported Type" }, { status: 400 });
