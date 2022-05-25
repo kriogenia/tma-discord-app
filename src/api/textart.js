@@ -7,8 +7,5 @@ export async function getAscii(text) {
     `http://api.textart.io/figlet.json?text=Puto ${text}&encode=false`
   );
   const data = await response.json();
-  if (!data.contents) {
-    throw Error("Passed limit. No contents received.");
-  }
-  return data.contents.figlet;
+  return data.contents?.figlet;
 }
