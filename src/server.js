@@ -38,7 +38,6 @@ router.get("/", () => {
  */
 router.post("/", async (request, env) => {
   const message = await request.json();
-  const base_url = `https://discord.com/api/v10/applications/${env.TMA_DISCORD_APPLICATION_ID}/`;
 
   // The `PING` message is used during the initial webhook handshake, and is
   // required to configure the webhook in the developer portal.
@@ -50,7 +49,7 @@ router.post("/", async (request, env) => {
   }
   /// The `APPLICATION_COMMAND` messages will be the user commands
   if (message.type === InteractionType.APPLICATION_COMMAND) {
-    return commands[message.data.name.toLowerCase()](message, base_url);
+    return commands[message.data.name.toLowerCase()](message, env);
   }
 
   console.error("Unsupported Type");

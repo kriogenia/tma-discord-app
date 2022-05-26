@@ -1,26 +1,56 @@
 import { getOnePieceVolume } from "../api/fandom";
 import { JsonResponse } from "../server";
 
-const opVol = async (message, base_url) => {
+const opVol = async (message, env) => {
   const volume = message.data.options[0].value;
+  let name = "";
 
   return getOnePieceVolume(volume)
     .then(({ title, cover, chapters }) => {
-      const name = `Tomo ${volume} - ${title}`;
+      /* Post message */
+      name = `Tomo ${volume} - ${title}`;
       const text = `**${name}**
 	  Capítulos ${chapters}
 	  siguiente día
 	  Cover: ${cover}
-		`;
+	  `;
 
-      console.log(base_url); // fetch new channel
+      const url = `https://discord.com/api/v10/channels/${message.channel_id}/messages`;
+      return fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bot ${env.TMA_DISCORD_TOKEN}`,
+        },
+        method: "POST",
+        body: JSON.stringify({
+          content: text,
+        }),
+      });
+    })
+    .then((response) => response.json())
+    .then((response) => {
+      /* Convert to thread */
+      const url = `https://discord.com/api/v10/channels/${message.channel_id}/messages/${response.id}/threads`;
 
+      return fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bot ${env.TMA_DISCORD_TOKEN}`,
+        },
+        method: "POST",
+        body: JSON.stringify({
+          name: name,
+          auto_archive_duration: 10080,
+        }),
+      });
+    })
+    .then((response) => {
+      /* Respond */
       return new JsonResponse({
         type: 4,
         data: {
-          name: name,
-          content: text,
-          auto_archive_duration: 10080,
+          content: `${"```"}${response.text()}${"```"}`,
+          flags: 64,
         },
       });
     })
