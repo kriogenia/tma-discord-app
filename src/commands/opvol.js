@@ -1,18 +1,22 @@
 import { getOnePieceVolume } from "../api/fandom";
 import { JsonResponse } from "../server";
+import { formatDate, nextSunday } from "../util/index";
 
 const opVol = async (message, env) => {
   const volume = message.data.options[0].value;
   let name = "";
+  let response_id = undefined;
 
   return getOnePieceVolume(volume)
     .then(({ title, cover, chapters }) => {
       /* Post message */
       name = `Tomo ${volume} - ${title}`;
       const text = `**${name}**
-	  Capítulos ${chapters}
-	  siguiente día
-	  Cover: ${cover}
+	  📖 Capítulos ${chapters}
+	  📅 Fecha: ${formatDate(nextSunday())}
+	  📔 Cover: ${cover}
+	  
+	  🏴‍☠️🏴‍☠️🏴‍☠️
 	  `;
 
       const url = `https://discord.com/api/v10/channels/${message.channel_id}/messages`;
@@ -29,6 +33,7 @@ const opVol = async (message, env) => {
     })
     .then((response) => response.json())
     .then((response) => {
+      response_id = response;
       /* Convert to thread */
       const url = `https://discord.com/api/v10/channels/${message.channel_id}/messages/${response.id}/threads`;
 
@@ -44,17 +49,30 @@ const opVol = async (message, env) => {
         }),
       });
     })
+    .then((response) => response.text())
     .then((response) => {
       /* Respond */
       return new JsonResponse({
         type: 4,
         data: {
-          content: `${"```"}${response.text()}${"```"}`,
+          content: `${"```"}${response}${"```"} - ${JSON.stringify(
+            response_id
+          )}`,
           flags: 64,
         },
       });
     })
-    .catch(console.error);
+    .catch((error) => {
+      console.error(error);
+      /* Respond */
+      return new JsonResponse({
+        type: 4,
+        data: {
+          content: `${"```"}${error}${"```"}`,
+          flags: 64,
+        },
+      });
+    });
 };
 
 export default opVol;

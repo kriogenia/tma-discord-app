@@ -15,6 +15,9 @@ import fetch from "node-fetch";
 const token = process.env.TMA_DISCORD_TOKEN;
 const applicationId = process.env.TMA_DISCORD_APPLICATION_ID;
 const testGuildId = process.env.TMA_DISCORD_TEST_GUILD_ID;
+if (process.env.REGISTER_GLOBAL) {
+  console.log("this works");
+}
 
 if (!token) {
   throw new Error("The TMA_DISCORD_TOKEN environment variable is required.");
@@ -80,5 +83,5 @@ async function registerCommands(url) {
   return response;
 }
 
-//await registerGlobalCommands();
-await registerGuildCommands();
+await registerGlobalCommands();
+//await registerGuildCommands();
