@@ -9,9 +9,8 @@ This is a bot that brings some functionality to our Discord server, hosted on Cl
 
 ## Commands
 
-- `\puto {string?}` Prints an ASCII "Puto {string}" in the screen. If not string is specified, Puto Allan will be printed.
-
----
+- `/opvol {volume}` Generates a message starting a new thread for the specified One Piece volume in the current channel.
+- `/puto {string?}` Prints an ASCII "Puto {string}" in the screen. If not string is specified, Puto Allan will be printed.
 
 ## Project structure
 
@@ -21,31 +20,37 @@ Below is a basic overview of the project structure:
 ├── .github/workflows/ci.yaml -> Github Action configuration
 ├── src
 │   ├── api           	  	  -> Code to integrate different APIs
-│   │   ├── textart.js	      
+│   │   ├── ...	      
 │   ├── commands           	  -> JSON payloads for commands
+│   │   ├── index.js	  	  -> Map of the commands functionality 
 │   │   ├── declaration.js	  -> Declaration for command creation
-│   │   ├── putoallan.js	  -> Command to print ASCII PutoAllan
+│   │   ├── ...
 │   ├── register.js           -> Sets up commands with the Discord API
 │   ├── server.js             -> Discord app logic and routing
 ├── test
-|   ├── test.js               -> Tests for app (it should have some, but, you know)
+|   ├── ...               	  -> Tests for app (it should have some, but, you know)
 ├── wrangler.toml             -> Configuration for Cloudflare workers
-├── package.json
-├── README.md
 ├── renovate.json             -> Configuration for repo automation
-├── .eslintrc.json
-├── .prettierignore
-├── .prettierrc.json
-└── .gitignore
+├── package.json
+├── README.md				  -> YOU ARE HERE
+├── ...
 ```
 
-## Configuring project
+## Local set-up
+
+> TODO
+
+In order to make the development without affecting the production bot a new test bot should be created and a development environment should be set-up.
+
+### Testing bot
 
 Before starting, you'll need a [Discord app](https://discord.com/developers/applications) with the following permissions:
-- `bot` with the `Send Messages` and `Use Slash Command` permissions
+- `bot` with the `Send Messages`, `Create Publics Threads` and `Use Slash Command` permissions
 - `applications.commands` scope
 
 > ⚙️ Permissions can be configured by clicking on the `OAuth2` tab and using the `URL Generator`. After a URL is generated, you can install the app by pasting that URL into your browser and following the installation flow.
+
+> It's recommended to test the bot in your own testing server. Once you create the link to authenticate the bot, navigate to it and add the bot to your server.
 
 ## Creating your Cloudflare worker
 
@@ -53,32 +58,28 @@ Next, you'll need to create a Cloudflare Workers
 - Visit the [Cloudflare dashboard](https://dash.cloudflare.com/)
 - Click on the `Workers` tab, and create a new service using the same name as your Discord bot
 - Make sure to [install the Wrangler CLI](https://developers.cloudflare.com/workers/cli-wrangler/install-update/) and set it up.
+- Add a new environment in the `wrangler.toml` and override the `account_id` field in their with your own Cloudflare id.
+- Copy the `dev` command in the `package.json` and make a new one with your environment name to run the application with your data.
 
 ### Storing secrets
 
-> 💡 More information about generating and fetching credentials can be found [in the tutorial](TODO)
+> 💡 More information about generating and fetching credentials can be found [in the tutorial](https://discord.com/developers/docs/tutorials/hosting-on-cloudflare-workers#creating-an-app-on-discord)
 
-The production service needs access to credentials from your app:
+The production environment is already set up with the bot secrets but you'll need to set-up your own secrets in your dev environment.
 
 ```
-$ wrangler secret put DISCORD_TOKEN
-$ wrangler secret put DISCORD_PUBLIC_KEY
-$ wrangler secret put DISCORD_APPLICATION_ID
-$ wrangler secret put DISCORD_TEST_GUILD_ID
+$ wrangler secret put DISCORD_TOKEN --env <your-env>
+$ wrangler secret put DISCORD_PUBLIC_KEY --env <your-env>
+$ wrangler secret put DISCORD_APPLICATION_ID --env <your-env>
+$ wrangler secret put DISCORD_TEST_GUILD_ID --env <your-env>
 ```
 
-## Running locally
+### Running locally
 
 > :bangbang: This depends on the beta version of the `wrangler` package, which better supports ESM on Cloudflare Workers.
 
-First clone the project:
+First fork the project and clone it. Then navigate to its directory and install dependencies:
 ```
-git clone https://github.com/discord/cloudflare-sample-app.git
-```
-
-Then navigate to its directory and install dependencies:
-```
-cd cloudflare-sample-app
 npm install
 ```
 
@@ -86,6 +87,8 @@ npm install
 
 ### Register commands
 
+The commands must be registered to add them to Discord, this is made with the `register.js` script.
+You can install the commands globally or on your own server.
 The following command only needs to be run once:
 
 ```
@@ -97,7 +100,7 @@ $ DISCORD_TOKEN=<your-token> DISCORD_APPLICATION_ID=<your-app-id> node src/regis
 Now you should be ready to start your server:
 
 ```
-$ npm run dev
+$ npm run <your-command>
 ```
 
 ### Setting up ngrok
@@ -115,6 +118,16 @@ This is going to bounce requests off of an external endpoint, and foward them to
 ![interactions-endpoint](https://user-images.githubusercontent.com/534619/157510959-6cf0327a-052a-432c-855b-c662824f15ce.png)
 
 This is the process we'll use for local testing and development. When you've published your bot to Cloudflare, you will _want to update this field to use your Cloudflare Worker URL._
+
+## Adding a command
+
+In order to add a new command the first step is to declare in the `src/commands/declaration.js` file following the [JSON structure of the Developer portal](https://discord.com/developers/docs/interactions/application-commands#slash-commands).
+
+After this you'll need to run the `register.js` script again to add the command to the Discord API so it can be used in the app. Once you can invoke it locally you can start to add functionality.
+
+To add the functionality create a new function in the `commands` folder accepting the message received from the user and the env object if you need it (it's needed to perform REST actions via fetch). Once the function is read it export it as default and add it the `commands/index.js`' Map like the other.
+
+After this the command should work. Once it's ready and tested, push the code, make a PR and it will be reviewed and merge. Specify in the PR that a new command has been added so the register script can be used after the merge to add the new commmand to the production bot.
 
 ## Deploying app
 

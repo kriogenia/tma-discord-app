@@ -5,7 +5,6 @@ import { formatDate, nextSunday } from "../util/index";
 const opVol = async (message, env) => {
   const volume = message.data.options[0].value;
   let name = "";
-  let response_id = undefined;
 
   return getOnePieceVolume(volume)
     .then(({ title, cover, chapters }) => {
@@ -33,7 +32,6 @@ const opVol = async (message, env) => {
     })
     .then((response) => response.json())
     .then((response) => {
-      response_id = response;
       /* Convert to thread */
       const url = `https://discord.com/api/v10/channels/${message.channel_id}/messages/${response.id}/threads`;
 
@@ -55,9 +53,7 @@ const opVol = async (message, env) => {
       return new JsonResponse({
         type: 4,
         data: {
-          content: `${"```"}${response}${"```"} - ${JSON.stringify(
-            response_id
-          )}`,
+          content: `${"```"}${response}${"```"}`,
           flags: 64,
         },
       });
