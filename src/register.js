@@ -1,4 +1,7 @@
-import { PUTOALLAN_COMMAND } from "./commands/declaration.js";
+import {
+  ONE_PIECE_COMMAND,
+  PUTOALLAN_COMMAND,
+} from "./commands/declaration.js";
 import fetch from "node-fetch";
 
 /**
@@ -64,7 +67,7 @@ async function registerCommands(url) {
       Authorization: `Bot ${token}`,
     },
     method: "PUT",
-    body: JSON.stringify([PUTOALLAN_COMMAND]),
+    body: JSON.stringify([ONE_PIECE_COMMAND, PUTOALLAN_COMMAND]),
   });
 
   if (response.ok) {
@@ -77,5 +80,5 @@ async function registerCommands(url) {
   return response;
 }
 
-await registerGlobalCommands();
-// await registerGuildCommands();
+//await registerGlobalCommands();
+await registerGuildCommands();
