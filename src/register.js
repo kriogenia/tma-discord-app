@@ -1,4 +1,5 @@
 import {
+  DRAGON_BALL_COMMAND,
   ONE_PIECE_COMMAND,
   PUTOALLAN_COMMAND,
 } from "./commands/declaration.js";
@@ -70,7 +71,11 @@ async function registerCommands(url) {
       Authorization: `Bot ${token}`,
     },
     method: "PUT",
-    body: JSON.stringify([ONE_PIECE_COMMAND, PUTOALLAN_COMMAND]),
+    body: JSON.stringify([
+      DRAGON_BALL_COMMAND,
+      ONE_PIECE_COMMAND,
+      PUTOALLAN_COMMAND,
+    ]),
   });
 
   if (response.ok) {
