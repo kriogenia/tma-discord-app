@@ -6,6 +6,7 @@
  * @returns The decoded ASCII text.
  */
 export const getAscii = async (text) => {
-  return fetch(`https://asciified.thelicato.io/api/v2/ascii?text=Puto ${text}`)
-    .then(res => res.text());
+  return fetch(
+    `https://asciified.thelicato.io/api/v2/ascii?text=Puto ${text}`
+  ).then((res) => res.text());
 };
